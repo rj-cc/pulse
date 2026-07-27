@@ -1,0 +1,9 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Increase the width of the form container for the registration page*/
+.fi-auth-layout.media-right .fi-auth-content-section .fi-auth-form-container {
+    max-width: 100rem; 
+}
