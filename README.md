@@ -152,9 +152,9 @@ Content editor → Filament /admin → MySQL → PortalController → Public por
 
 ```mermaid
 erDiagram
-    PortalSetting ||--o{ PortalSection : "singleton config"
-    PortalSection ||--|{ PortalSectionItem : has many
-    SidebarSection ||--|{ SidebarItem : has many
+    PortalSetting
+    PortalSection ||--|{ PortalSectionItem : "has many"
+    SidebarSection ||--|{ SidebarItem : "has many"
 ```
 
 - **PortalSetting** — singleton row for site-wide branding and theme
