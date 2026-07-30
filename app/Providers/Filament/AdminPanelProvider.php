@@ -11,10 +11,13 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
@@ -29,16 +32,30 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        Notifications::alignment(Alignment::Right);
+        Notifications::verticalAlignment(VerticalAlignment::End);
+
         return $panel
             ->default()
             ->id('admin')
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
-                'primary' => '#003366',
+                'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Indigo,
+                'primary' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
-            ->font('Plus Jakarta Sans')
+            ->font('Mulish')
             ->maxContentWidth(Width::Full)
+            ->sidebarCollapsibleOnDesktop()
+            ->brandName('Pulse')
+            ->brandLogo(asset('/images/samplelogo.svg'))
+            ->favicon(asset('/images/samplelogo.svg'))
+            ->brandLogoHeight('2rem')
+            ->topbar(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -47,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                //FilamentInfoWidget::class,
+                // FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -66,23 +83,23 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 AuthDesignerPlugin::make()
                     ->login(fn (AuthPageConfig $config) => $config
-                        ->media(asset('/images/backgroundsample.jpg'))
+                        ->media(asset('/images/backgroundsample.jpg'), alt: 'image')
                         ->mediaPosition(MediaPosition::Left)
-                        ->mediaSize('50%')
+                        ->mediaSize('40%')
                         ->usingPage(Login::class)
                     )
                     ->registration(fn (AuthPageConfig $config) => $config
-                        ->media(asset('/images/backgroundsample.jpg'))
+                        ->media(asset('/images/backgroundsample.jpg'), alt: 'image')
                         ->mediaPosition(MediaPosition::Right)
                         ->mediaSize('40%')
                         ->usingPage(Register::class)
                     )
                     ->passwordReset(fn ($config) => $config
-                        ->media(asset('/images/backgroundsample.jpg'))
-                        ->mediaPosition(MediaPosition::Cover) // Override position
+                        ->media(asset('/images/backgroundsample.jpg'), alt: 'image')
+                        ->mediaPosition(MediaPosition::Cover)
                         ->blur(2)
                     )
-                    ->themeToggle()
+                    ->themeToggle(),
             ])
             ->unsavedChangesAlerts()
             ->errorNotifications()
