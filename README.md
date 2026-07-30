@@ -1,58 +1,258 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Pulse — Employee Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**MVP — ready for internal pilot and content validation**
 
-## About Laravel
+Pulse is a configurable employee intranet homepage with a Filament CMS backend. Content editors manage branding, announcements, system links, and sidebar widgets through an admin panel — no code changes required for day-to-day updates.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### For employees (public portal)
 
-## Learning Laravel
+- Branded homepage with topbar, hero, and footer
+- Three main content layouts: carousel, icon grid, and info grid
+- Sidebar widgets (quick access, birthdays, help links, and more)
+- Detail sheet for rich announcement content
+- Live clock and time-of-day greeting
+- Scroll-reveal animations
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### For content editors (admin panel)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Site Settings** — organization name, logo, hero/footer copy, contact info
+- **Main Sections** — homepage content blocks with layout-specific item fields
+- **Sidebar Sections** — right-column widget panels
+- **Theming** — 5 color palettes and 7 font pairings
+- **Publishing** — publish toggles with optional schedule windows (`starts_at` / `ends_at`)
+- **Demo seeder** — realistic sample content for quick evaluation
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## Tech Stack
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| Layer | Technology |
+|-------|------------|
+| Backend | Laravel 13, PHP 8.3+ |
+| Admin CMS | Filament 5, Livewire 4 |
+| UI components | [BlatUI](https://github.com/anousss007/blatui) (shadcn-style Blade components) |
+| Styling | Tailwind CSS v4, Alpine.js |
+| Build | Vite 8 |
+| Testing | Pest 4 |
+| Database | MySQL (development) / SQLite in-memory (tests) |
+
+---
+
+## Requirements
+
+- PHP 8.3 or higher
+- Composer
+- Node.js and npm
+- MySQL
+
+---
+
+## Quick Start
+
+### Automated setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer run setup
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+This runs: `composer install`, copies `.env` if missing, generates an app key, runs migrations, installs npm packages, and builds frontend assets.
 
-## Contributing
+### Manual setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.example .env
 
-## Code of Conduct
+# Create a MySQL database named "pulse", then configure DB_* in .env
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+npm install
+npm run build
+```
 
-## Security Vulnerabilities
+### Development server
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+composer run dev
+```
+
+Starts the PHP server, queue listener, and Vite dev server concurrently.
+
+---
+
+## URLs
+
+| Page | URL |
+|------|-----|
+| Public portal | `/` or `https://pulse.test` (via Herd/Envkit) |
+| Admin panel | `/admin` |
+| Admin registration | `/admin/register` |
+
+No default admin user is seeded. Register your first account at `/admin/register`, then sign in at `/admin/login`.
+
+---
+
+## Admin Guide
+
+All portal management lives under the **Portal** navigation group in Filament.
+
+### Site Settings
+
+Configure organization branding: name, tagline, logo, topbar contact info, hero copy, footer links, color palette, and font pairing. Changes apply immediately on the public portal.
+
+### Main Sections
+
+Create homepage content blocks. Each section has a layout:
+
+| Layout | Use case |
+|--------|----------|
+| **Carousel** | Announcements with badges, images, and optional detail modals |
+| **Icon grid** | System links and tools with icons |
+| **Info grid** | Must-know cards with tags and descriptions |
+
+Add items through the section's relation manager. Items support external URLs, detail modals, icons, images, and scheduled visibility.
+
+### Sidebar Sections
+
+Create right-column widget panels — quick links, avatar lists (e.g. birthdays), help resources, and similar compact content.
+
+### Publishing
+
+Both sections and items have publish toggles. Items can optionally be scheduled with `starts_at` and `ends_at` dates. Unpublished or out-of-window items are hidden from the public portal.
+
+---
+
+## Architecture
+
+```
+Content editor → Filament /admin → MySQL → PortalController → Public portal /
+```
+
+### Key paths
+
+| Area | Location |
+|------|----------|
+| Controller | `app/Http/Controllers/PortalController.php` |
+| Models | `app/Models/PortalSetting.php`, `PortalSection.php`, `PortalSectionItem.php`, `SidebarSection.php`, `SidebarItem.php` |
+| Enums | `app/Enums/PortalSectionLayout.php`, `PortalColorPalette.php`, `PortalFontStyle.php` |
+| Public views | `resources/views/portal/` |
+| UI components | `resources/views/components/ui/` |
+| Admin resources | `app/Filament/Resources/PortalSections/`, `SidebarSections/` |
+| Site settings page | `app/Filament/Pages/ManagePortalSettings.php` |
+| Frontend JS | `resources/js/portal.js` |
+| Demo seeder | `database/seeders/PortalSeeder.php` |
+
+### Data model
+
+```mermaid
+erDiagram
+    PortalSetting ||--o{ PortalSection : "singleton config"
+    PortalSection ||--|{ PortalSectionItem : has many
+    SidebarSection ||--|{ SidebarItem : has many
+```
+
+- **PortalSetting** — singleton row for site-wide branding and theme
+- **PortalSection** — main homepage block (carousel, icon grid, or info grid)
+- **PortalSectionItem** — individual card, link, or announcement within a section
+- **SidebarSection** — sidebar widget group
+- **SidebarItem** — individual sidebar link or avatar entry
+
+---
+
+## Development
+
+```bash
+# Run tests
+composer test
+
+# Format PHP (modified files only)
+vendor/bin/pint --dirty
+
+# Rebuild frontend assets
+npm run build
+
+# Frontend hot reload
+npm run dev
+```
+
+For AI agent and coding conventions, see [AGENTS.md](AGENTS.md).
+
+---
+
+## MVP Status
+
+### What MVP means here
+
+Pulse solves one core problem: employees need a single branded homepage for announcements, system links, and quick info — without developers editing code for every change.
+
+The MVP loop is complete:
+
+1. A content editor brands the portal and publishes content through `/admin`
+2. Employees visit `/` and see announcements, system links, and sidebar widgets
+3. Day-to-day content updates require no developer involvement
+
+### What's in the MVP
+
+- Site settings (branding, colors, fonts)
+- Three main section layouts plus sidebar sections
+- Publishing and scheduled visibility
+- Detail sheet for rich announcement content
+- Demo seeder for quick evaluation
+
+### What's intentionally out of scope for MVP
+
+- Employee login on the public portal
+- Admin roles and permissions
+- Search, analytics, and notifications
+- Production-grade test coverage and CI
+- Audit trail population
+
+### Production readiness
+
+Pulse is safe for an **internal pilot** to validate content workflows and portal design. Before org-wide or regulated deployment, complete Phase 1 hardening below.
+
+---
+
+## Possible Enhancements (If Pursued)
+
+These are not required for MVP validation but become relevant once the portal moves from pilot to sustained internal use or wider rollout.
+
+### Phase 1 — Harden for production
+
+- Expand test coverage (Filament CRUD, controller integration, scheduling logic)
+- Add authorization policies for portal management
+- Populate audit metadata (`created_by` / `updated_by`) on create and update
+- Add GitHub Actions CI (Pint + Pest)
+- Seed a default admin user for development environments
+- Align icon documentation (admin forms use Lucide icon names)
+
+### Phase 2 — Better editor and employee experience
+
+- Draft preview before publishing
+- Detail sheet modals for sidebar items
+- Portal search across announcements, systems, and info cards
+- Admin login link on the public portal footer
+- Centralized media library for logos, images, and avatars
+- Role-based admin (editor vs. super-admin)
+
+### Phase 3 — Enterprise scale
+
+- Employee authentication on the public portal with personalized content
+- Multi-portal / multi-tenant support
+- Analytics (link clicks, popular systems, announcement views)
+- Notifications (email, Teams, Slack) for new announcements
+- Headless content API for mobile apps and integrations
+- Content version history and rollback
+- Multi-language portal content
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Pulse is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
